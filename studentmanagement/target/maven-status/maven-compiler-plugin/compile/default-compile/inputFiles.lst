@@ -1,0 +1,12 @@
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\model\Student.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\exception\DuplicateEntryException.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\app\WebConfig.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\exception\NoSuchResourceFoundException.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\controller\StudentController.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\exception\BadResourceRequestException.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\service\StudentService.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\util\LocalDateDeserializer.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\dao\StudentDao.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\util\LocalDateSerializer.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\repository\StudentRepository.java
+C:\Users\lenovo\Desktop\studentManagement\studentmanagement\src\main\java\com\tio\net\app\StudentApplication.java

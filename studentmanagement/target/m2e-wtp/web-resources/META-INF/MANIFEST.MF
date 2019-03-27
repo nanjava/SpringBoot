@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Built-By: lenovo
+Build-Jdk: 11.0.2
+Implementation-Title: StudentManagement
+Implementation-Version: 0.0.1
+Implementation-Vendor-Id: com.tio.net
+Implementation-Vendor: Pivotal Software, Inc.
+Implementation-URL: http://projects.spring.io/spring-boot/studentmanagem
+ ent/
+Created-By: Maven Integration for Eclipse
+

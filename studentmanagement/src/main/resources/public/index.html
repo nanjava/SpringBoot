@@ -1,0 +1,313 @@
+
+<html>
+<head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.css" />
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.js"></script>
+<script type="text/javascript">
+
+function numOnly(selector){
+	  selector.value = selector.value.replace(/[^0-9]/g,'');
+	}
+
+var dateControler = {
+	    currentDate : null
+	}
+	
+$(document).on( "change", "#bday",function( event, ui ) {
+    var now = new Date();
+    var selectedDate = new Date($(this).val());
+    
+    if(selectedDate > now) {
+        $(this).val(dateControler.currentDate)
+        $("#errorBox").show();
+        $("#errorBox").html("enter the valid date of birth");
+    } else {
+    	$("#errorBox").hide();
+        dateControler.currentDate = $(this).val();
+    }
+});  
+
+
+
+	$(document).ready(function() {
+		var student = {};
+		var dynamicURL = "";
+		var methodName = "";
+		getAllStudent();
+		$('#btnAddStudent').click(function() {
+			var emailRegex = /^[A-Za-z0-9._]*\@[A-Za-z]*\.[A-Za-z]{2,5}$/;
+			var studentId = $('#id').val();
+			var studentName = $('#name').val();
+			var email = $('#email').val();
+			var mobile = $('#mobile').val();;
+			var phone = $('#phone').val();
+			student.name = $('#name').val();
+			student.address = $('#address').val();
+			student.email = $('#email').val();
+			student.mobile = $('#mobile').val();
+			student.gender = $('#gender').val();
+			student.phone = $('#phone').val();
+			if($('input:radio[name=sex]:checked').val() != ''){
+				student.gender = $('input:radio[name=sex]:checked').val();
+			}
+			if($("#bday").val() != ''){
+				student.dob= $("#bday").val();
+			}
+			if (studentName == "" ) {
+				$("#errorBox").show();
+				$("#name").focus();
+				$("#errorBox").html("Enter the name");
+				$("#errorBox").css({"color": "red", "width": "20%"});
+				return false;
+			}
+			if (email != "" && !emailRegex.test(email)) {
+				$("#errorBox").show();
+				$("#email").focus();
+				$("#errorBox").html("Enter the valid email");
+				$("#errorBox").css({"color": "red", "width": "20%"});
+				return false;
+			}
+			if(mobile != "" && (mobile.length < 10 || mobile.length > 15)){
+				$("#errorBox").show();
+				$("#mobile").focus();
+				$("#errorBox").html("Mobile number should be in between 10 to 15 digits");
+				$("#errorBox").css({"color": "red", "width": "20%"});
+				return false;
+			}
+			
+			if(phone != ""  && (phone.length < 10 || phone.length > 15)){
+				$("#errorBox").show();
+				$("#phone").focus();
+				$("#errorBox").html("Phone number should be in between 10 to 15 digits");
+				$("#errorBox").css({"color": "red", "width": "20%"});
+				return false;
+			}
+			if (studentId) {
+				//update it
+				dynamicURL = "http://localhost:8080/student/" + studentId;
+				methodName = "PUT";
+			} else {
+				//save it
+				dynamicURL = "http://localhost:8080/student";
+				methodName = "POST";
+			}
+			var bookObj = JSON.stringify(student);
+			$.ajax({
+				url : dynamicURL,
+				method : methodName,
+				data : bookObj,
+				contentType : 'application/json; charset=utf-8',
+				success : function() {
+					$("#errorBox").hide();
+					alert('Saved successfully');
+					getAllStudent();
+					reset();
+				},
+				error : function(error) {
+					 var r = jQuery.parseJSON(error.responseText);
+				      alert("Message: " + r.message);
+				}
+			})
+		})
+	})
+	
+	
+
+
+	function getAllStudent() {
+		$
+				.ajax({
+					url : "http://localhost:8080/student",
+					method : "GET",
+					dataType : "json",
+					success : function(data) {
+						if (!$.trim(data)) {
+							$("#emptyList").html("<br><br><b>Records Not Available</b>");
+							$("#tblStudent").hide();
+						} else {
+							$("#emptyList").hide();
+							$("#tblStudent").show();
+							var tableBody = $('#tblStudent tbody');
+							tableBody.empty();
+							$(data)
+									.each(
+											function(index, element) {
+												tableBody
+														.append('<tr><td>'
+																+ element.name
+																+ '</td><td>'
+																+ element.address
+																+ '</td><td>'
+																+ element.email
+																+ '</td><td>'
+																+ element.mobile
+																+ '</td><td>'
+																+ element.phone
+																+ '</td><td>'
+																+ (element.dob != null ? element.dob : '-')
+																+ '</td><td>'
+																+ (element.gender != null ? element.gender == 'M' ? 'Male' : 'Female' : '-')
+																+ '</td><td><button style="background: green;"  onclick = "update('
+																+ element.id
+																+ ')">Update</button> | <button style="background: red;"  onclick = "deleteStudent('
+																+ element.id
+																+ ')">Delete</button></td></tr>');
+											})
+						}
+					},
+					error : function(error) {
+						alert(error);
+					}
+				})
+	}
+
+	function deleteStudent(id) {
+		$.ajax({
+			url : 'http://localhost:8080/student/' + id,
+			method : 'DELETE',
+			success : function() {
+				alert('record has been deleted');
+				getAllStudent();
+			},
+			error : function(error) {
+				alert(error);
+			}
+		})
+	}
+
+	function update(id) {
+		$("#sex_m").attr('checked', false);
+		$("#sex_f").attr('checked', false);
+		$.ajax({
+			url : 'http://localhost:8080/student/' + id,
+			method : 'GET',
+			dataType : 'json',
+			success : function(data) {
+				$('#id').val(data.id);
+				$('#name').val(data.name);
+				$('#address').val(data.address);
+				$('#email').val(data.email);
+				$('#bday').val(data.dob);
+				$('#mobile').val(data.mobile);
+				$('#phone').val(data.phone);
+				if(data.gender == 'M'){
+					$("#sex_m").attr('checked', 'checked');
+				}else if(data.gender =='F'){
+					$("#sex_f").attr('checked', 'checked');
+				}
+				getAllStudent();
+			},
+			error : function(error) {
+				alert(error);
+			}
+		})
+	}
+
+	function reset() {
+		$('#name').val('');
+		$('#address').val('');
+		$('#id').val('');
+		$('#email').val('');
+		$('#mobile').val('');
+		$('#phone').val('');
+		$('#bday').val('');
+		$("#sex_m").attr('checked', false);
+		$("#sex_f").attr('checked', false);
+	}
+</script>
+</head>
+<body>
+      <div><h1 style="color:blue;margin-left:30px;">Student Management System</h1></div>
+	<div>
+		<div id="errorBox"></div>
+		<table>
+			<td><input type="text" id="id" hidden></td>
+			<tr>
+				<td>Name<span style="color: red">*</td>
+				<td><input type="text" id="name" required></td>
+			</tr>
+			<tr>
+				<td>Date Of Birth</td>
+				<td><input type="date" id="bday"></td>
+			</tr>
+
+			<tr>
+				<td>Address</td>
+				<td><input type="text" id="address"></td>
+			</tr>
+			<tr>
+				<td>Email</td>
+				<td><input type="email" id="email"></td>
+			</tr>
+			<tr>
+				<td>Mobile</td>
+				<td><input type="tel" id="mobile" onkeyup="numOnly(this)"
+					onblur="numOnly(this)"></td>
+			</tr>
+			<tr>
+				<td>Gender</td>
+				<td><input type="radio" name="sex" id="sex_m" value="M" checked>Male</input> <input
+					type="radio" name="sex" id="sex_f" value="F">Female</input></td>
+			</tr>
+			<tr>
+				<td>Phone</td>
+				<td><input type="tel" id="phone" onkeyup="numOnly(this)"
+					onblur="numOnly(this)"></td>
+			</tr>
+			<tr colspan="2" style="background: cornflowerblue;">
+				<td><input type="button" value="Add Student" id="btnAddStudent"></td>
+			</tr>
+		</table>
+		<div id="emptyList"></div>
+		<table width=100px; id="tblStudent">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Address</th>
+					<th>Email</th>
+					<th>Mobile</th>
+					<th>Phone</th>
+					<th>Date Of Birth</th>
+					<th>Gender</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+
+			</tbody>
+		</table>
+	</div>
+</body>
+<style>
+#tblStudent {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#tblStudent td, #customers th {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+#tblStudent tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+#tblStudent tr:hover {
+	background-color: #ddd;
+}
+
+#tblStudent th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #4CAF50;
+	color: white;
+}
+</style>
+</html>
